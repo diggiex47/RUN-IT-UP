@@ -1,0 +1,48 @@
+.Login {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+  }
+  
+  h6 {
+    margin-top: 10px;
+    text-align: center;
+    font-size: 30px;
+  }
+  
+  .text-area {
+    text-align: center;
+    padding: 4px;
+    margin: 6px 0;
+  }
+  
+  .text-input {
+    text-align: center;
+    width: 300px;
+    padding: 8px;
+    margin: 4px 0;
+    border: 2px solid #c6c6dc;
+    border-radius: 7px;
+    box-sizing: border-box;
+  }
+  
+  button {
+    background-color: #4CAF50;
+    color: white;
+    padding: 12px;
+    margin: auto;
+    cursor: pointer;
+    width: 120px;
+    border-radius: 120px;
+    border: none;
+  }
+  
+  button:hover {
+    background-color: #45a049;
+  }
+  
+  .submit-button {
+    margin-top: 10px;
+  }
