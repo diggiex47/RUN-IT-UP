@@ -1,7 +1,6 @@
 "use client";
 
 import React, { Component } from "react";
-import "./login.css";
 
 class Product extends Component {
   render() {

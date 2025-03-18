@@ -40,7 +40,7 @@ export async function POST(req: Request) {
     });
 
     if (existingUserByEmail) {
-      return NextResponse.json({ user:null, message: 'Mail already being used.' }, { status: 400 });
+      return NextResponse.json({ message: 'Mail already being used.' }, { status: 400 });
     }
 
     const existingUserByUsername = await prisma.user.findUnique({
@@ -48,7 +48,7 @@ export async function POST(req: Request) {
     });
 
     if (existingUserByUsername) {
-      return NextResponse.json({ user: null, message: 'username already being used.' }, { status: 400 });
+      return NextResponse.json({ message: 'username already being used.' }, { status: 400 });
     }
 
     // Hash the password
@@ -64,7 +64,7 @@ export async function POST(req: Request) {
     });
 
     // Send success response
-    return NextResponse.json({user: username, email: email, message: 'User created successfully.'}, { status: 201 });
+    return NextResponse.json({ message: 'User created successfully.', user: { username, email } }, { status: 201 });
   } catch (error) {
     console.error('Signup error:', error);
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
