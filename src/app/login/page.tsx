@@ -1,8 +1,8 @@
 "use client";
 
 import React, { Component } from "react";
+import { useRouter } from "next/navigation";
 import "./login.css";
-
 
 
 
