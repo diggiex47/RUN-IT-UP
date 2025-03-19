@@ -59,7 +59,7 @@ import { useState } from "react";
     <div className="Login">
       <h6>Login Here</h6>
      
-      <form>
+      <form onSubmit = {handleSubmit}>
         <div className="text-area">
           <input
           type="text"
@@ -67,6 +67,8 @@ import { useState } from "react";
           name="email"
           placeholder="Mail"
           className="text-input"
+          value={email}
+            onChange={(e) => setEmail(e.target.value)}
           />
         </div> 
 
@@ -78,6 +80,8 @@ import { useState } from "react";
               name="password"
               placeholder="password"
               className="text-input"
+              value={password}
+            onChange={(e) => setPassword(e.target.value)}
             />
           </div>
           <div className="text-area">
@@ -86,11 +90,11 @@ import { useState } from "react";
             </button>
           </div>
 
-          <div className="text-area">
+          {/* <div className="text-area">
             <button type="submit" className="submit-button">
               Forgot Password
             </button>
-          </div>
+          </div> */}
 
          </form>
 
