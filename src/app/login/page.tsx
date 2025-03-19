@@ -1,14 +1,59 @@
 "use client";
 
-import React, { Component } from "react";
+import React, { Component, FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import "./login.css";
+import { useState } from "react";
+
+ 
+
+ const Login = () => {
+   // ✅ State variables with inferred types
+   const [email, setEmail] = useState<string>("");
+   const [password, setPassword] = useState<string>("");
+   const [error, setError] = useState<string>("");
+
+   const router = useRouter();
+
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    if ( !email || !password) {
+      setError("All fields are required!");
+      return;
+    }
+
+    try {
+      const response = await fetch("api/user/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email,
+          password
+        }),
+      })
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        setError(data.error || "something went wrong.");
+        return;
+      }
 
 
+      router.push("/product");
+    }
+
+    catch (err) {
+      setError("An unexpected error occurred.");
+      console.error(err);
+    }
+
+  }
 
 
-class Login extends Component {
-  render() {
     return( 
     
     <div className="Login">
@@ -18,9 +63,9 @@ class Login extends Component {
         <div className="text-area">
           <input
           type="text"
-          id="username"
-          name="username"
-          placeholder="Mail or username"
+          id="email"
+          name="email"
+          placeholder="Mail"
           className="text-input"
           />
         </div> 
@@ -51,7 +96,6 @@ class Login extends Component {
 
       </div>
     )
-  }
-}
+};
 
 export default Login;

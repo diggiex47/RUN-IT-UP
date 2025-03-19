@@ -1,6 +1,7 @@
 import { NextResponse, NextRequest } from "next/server";
 import prisma from "@/lib/prisma";
 import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
 
 export async function POST(req: Request) {
 
@@ -21,6 +22,18 @@ export async function POST(req: Request) {
         }
 
         const passwordMatch = await bcrypt.compare(password, existingUser.password);
+
+        if (!passwordMatch) {
+            return NextResponse.json({ error: "Invalid password" }, { status: 400 });
+        }
+
+        const tokenData = {
+            userId: existingUser.id,
+            email: existingUser.email,
+        }
+        const token = jwt.sign(tokenData, process.env.TOKEN_SECRET!, { expiresIn: "1h" });
+        
+        return NextResponse.json({ token }, { status: 200 });
 
     }
     catch(err){
