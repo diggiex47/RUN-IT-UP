@@ -1,6 +1,6 @@
 "use client";
 
-import React, { Component, FormEvent } from "react";
+import React, { FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import "./login.css";
 import { useState } from "react";

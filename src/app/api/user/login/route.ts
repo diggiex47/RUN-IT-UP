@@ -27,13 +27,13 @@ export async function POST(req: Request) {
             return NextResponse.json({ error: "Invalid password" }, { status: 400 });
         }
 
-        const tokenData = {
-            userId: existingUser.id,
-            email: existingUser.email,
-        }
-        const token = jwt.sign(tokenData, process.env.TOKEN_SECRET!, { expiresIn: "1h" });
+        // const tokenData = {
+        //     userId: existingUser.id,
+        //     email: existingUser.email,
+        // }
+        // const token = jwt.sign(tokenData, process.env.TOKEN_SECRET!, { expiresIn: "1h" });
         
-        return NextResponse.json({ token }, { status: 200 });
+        return NextResponse.json({ message: 'logged in' }, { status: 200 });
 
     }
     catch(err){
