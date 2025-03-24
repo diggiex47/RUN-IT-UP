@@ -1,4 +1,4 @@
-import { NextResponse, NextRequest } from "next/server";
+import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
@@ -27,15 +27,21 @@ export async function POST(req: Request) {
             return NextResponse.json({ error: "Invalid password" }, { status: 400 });
         }
 
-        // const tokenData = {
-        //     userId: existingUser.id,
-        //     email: existingUser.email,
-        // }
-        // const token = jwt.sign(tokenData, process.env.TOKEN_SECRET!, { expiresIn: "1h" });
+        const tokenData = {
+            userId: existingUser.id,
+            username: existingUser.username,
+            email: existingUser.email,
+        }
+        const token = jwt.sign(tokenData, process.env.TOKEN_SECRET!, { expiresIn: "1h" })
         
-        return NextResponse.json({ message: 'logged in' }, { status: 200 });
+        const response = NextResponse.json({ message: 'logged in' }, { status: 200 })
 
+        response.cookies.set('token', token, {
+            httpOnly: true
+        })
+        return response
     }
+
     catch(err){
         console.error(err);
         return NextResponse.json({error: "An unexpected error occurred."}, {status: 500});
