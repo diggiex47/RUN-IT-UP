@@ -1,7 +1,10 @@
-import { NextResponse } from 'next/server';
-import type { NextRequest } from 'next/server';
+import { NextResponse, NextRequest  } from 'next/server';
 import prisma from '@/lib/prisma';
 import bcrypt from 'bcrypt';
+import { sendMail } from '@/helper/verifyMail';
+
+
+
 
 // // Define the expected shape of the request body
 // interface SignupRequestBody {
@@ -25,6 +28,7 @@ export async function POST(req: Request) {
 
     const { username, email, password, confirmPassword } = body;
 
+
     // Basic validation
     if (!username || !email || !password || !confirmPassword) {
       return NextResponse.json({ error: 'All fields are required.' }, { status: 400 });
@@ -35,6 +39,7 @@ export async function POST(req: Request) {
     }
 
     // Check if user already exists
+
     const existingUserByEmail = await prisma.user.findUnique({
       where: { email: email },
     });
@@ -52,7 +57,9 @@ export async function POST(req: Request) {
     }
 
     // Hash the password
+
     const hashedPassword = await bcrypt.hash(password, 10);
+
 
     // Create the user in DB
     const newUser = await prisma.user.create({
@@ -63,8 +70,14 @@ export async function POST(req: Request) {
       }
     });
 
+  
+
+    // verification mail 
+    await sendMail({email, emailType: "Verify", userId: newUser.id})
+
     // Send success response
-    return NextResponse.json({ message: 'User created successfully.', user: { username, email } }, { status: 201 });
+    return NextResponse.json({ message: 'User created successfully.',success: true, user: { username, email } }, { status: 201 });
+    
   } catch (error) {
     console.error('Signup error:', error);
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
