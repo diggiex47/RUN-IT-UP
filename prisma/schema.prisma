@@ -20,6 +20,7 @@ model user {
   emailVerified Boolean  @default(false)
   username  String   @unique
   password  String
+  role     String   @default("user")
   isVerified Boolean  @default(false)
   forgotPasswordToken String?
   forgotPasswordTokenExpiry DateTime?
@@ -27,4 +28,14 @@ model user {
   verificationTokenExpiry DateTime?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+model Product {
+  id           String   @id @default(cuid())
+  title        String
+  description  String
+  lastModified DateTime @default(now())
+  modifiedBy   String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
 }

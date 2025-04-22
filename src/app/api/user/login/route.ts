@@ -3,47 +3,69 @@ import prisma from "@/lib/prisma";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 
-export async function POST(req: Request) {
-
-    try{
-        const body = await req.json();
-
+export async function POST(request: Request) {
+    try {
+        const body = await request.json();
         const { email, password } = body;
-        console.log(body);
 
-        if(!email || !password){
-            return NextResponse.json({error: "All fields requeried"}, {status: 400});
+        if (!email || !password) {
+            return NextResponse.json({ error: "All fields required" }, { status: 400 });
         }
 
-        const existingUser = await prisma.user.findUnique({ where: { email: email } });
+        const user = await prisma.user.findUnique({
+            where: { email },
+            select: {
+                id: true,
+                email: true,
+                username: true,
+                password: true,
+                role: true,
+                isVerified: true,
+                emailVerified: true,
+            }
+        });
 
-        if(!existingUser){
-            return NextResponse.json({error: "User not found"}, {status: 404});
+        if (!user) {
+            return NextResponse.json({ error: "User not found" }, { status: 404 });
         }
 
-        const passwordMatch = await bcrypt.compare(password, existingUser.password);
+        const passwordMatch = await bcrypt.compare(password, user.password);
 
         if (!passwordMatch) {
             return NextResponse.json({ error: "Invalid password" }, { status: 400 });
         }
 
         const tokenData = {
-            userId: existingUser.id,
-            username: existingUser.username,
-            email: existingUser.email,
-        }
-        const token = jwt.sign(tokenData, process.env.TOKEN_SECRET!, { expiresIn: "1h" })
-        
-        const response = NextResponse.json({ message: 'logged in' }, { status: 200 })
+            id: user.id,
+            username: user.username,
+            email: user.email,
+            role: user.role,
+        };
 
-        response.cookies.set('token', token, {
-            httpOnly: true
-        })
-        return response
-    }
+        const token = jwt.sign(tokenData, process.env.TOKEN_SECRET!, { expiresIn: "24h" });
 
-    catch(err){
-        console.error(err);
-        return NextResponse.json({error: "An unexpected error occurred."}, {status: 500});
+        const response = NextResponse.json({
+            message: "Login successful",
+            user: {
+                id: user.id,
+                username: user.username,
+                email: user.email,
+                role: user.role,
+                isVerified: user.isVerified,
+                emailVerified: user.emailVerified,
+            }
+        }, { status: 200 });
+
+        response.cookies.set("token", token, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === "production",
+            sameSite: "strict",
+            maxAge: 86400 // 24 hours in seconds
+        });
+
+        return response;
+    } catch (error) {
+        console.error("Login error:", error);
+        return NextResponse.json({ error: "An unexpected error occurred." }, { status: 500 });
     }
 }
